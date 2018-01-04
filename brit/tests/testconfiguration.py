@@ -10,12 +10,10 @@ from brit.task import Task
 from brit.configuration import Configuration
 from brit.definition import Definition
 from brit.retain_strategy import RetainStrategy
+from brit.tests.environment import Environment
 
 class TestConfiguration(unittest.TestCase):
     
-    TEST_CONFIG_FILE = 'C:/TEMP/test_config.brit'
-
-
     def testCreate(self):
         newConfig = Configuration()
         self.assert_(newConfig <> None, 'No configuration created')
@@ -31,13 +29,15 @@ class TestConfiguration(unittest.TestCase):
         newConfig.retainStrategies.append(RetainStrategy('reatinDefault'))
         newConfig.backupDirectory = 'c:/temp/backup'
         
-        if os.path.isfile(self.TEST_CONFIG_FILE):
-            os.remove(self.TEST_CONFIG_FILE)
-            
-        newConfig.writeTo(self.TEST_CONFIG_FILE)
-        self.assert_(os.path.isfile(self.TEST_CONFIG_FILE), 'No config file written')
+        Environment.cleanupTestFolder()
+        Environment.setupExamplesDir()
+        testFile = os.path.join(Environment.examplesFolder(), 'test_config.brit')
         
-        newConfig2 = Configuration.readFrom(self.TEST_CONFIG_FILE)
+            
+        newConfig.writeTo(testFile)
+        self.assert_(os.path.isfile(testFile), 'No config file written')
+        
+        newConfig2 = Configuration.readFrom(testFile)
         
         self.assert_(newConfig2 <> None, 'No configuration has been read from Json')
         self.assert_(len(newConfig2.tasks)    == 2,           'Length of list of tasks not OK')
@@ -48,6 +48,8 @@ class TestConfiguration(unittest.TestCase):
         self.assert_(len(newConfig2.retainStrategies) == 1, 'Length of list of RetainStrategies not OK')
         
         self.assert_(newConfig2.backupDirectory == 'c:/temp/backup', 'backupDirectory not OK')
+        
+        Environment.cleanupTestFolder()
         
         
     def testReadFrom_WithNotExistingFile(self):
