@@ -8,6 +8,8 @@ import os
 import zipfile
 from datetime import datetime
 
+from filemapping import FileMapping
+
 class Task(object):
     '''
     classdocs
@@ -73,11 +75,15 @@ class Task(object):
         self._prepareTargetFolder()
         filename = self._getTargetFilename()
         
+        mapping     = FileMapping()
         archiveFile = self._prepareArchive(filename)
         
         for defintion in self.defintions():
             for fileInfo in defintion.fileInfos():
                 self._doArchiveFile(archiveFile, fileInfo)
+                mapping.addItem(fileInfo['source'], fileInfo['target'])
+        
+        self._archiveMapping(archiveFile, mapping)        
                 
         archiveFile.close()
         
@@ -126,6 +132,12 @@ class Task(object):
                           compress_type = zipfile.ZIP_DEFLATED)
         
         # FIXME: Log in mapping file
+        
+    
+    def _archiveMapping(self, archiveFile, mapping):
+        archiveFile.writestr(os.path.join('.meta', 'mapping.json'),
+                            mapping.toString(),
+                            compress_type = zipfile.ZIP_DEFLATED)
         
 
     
