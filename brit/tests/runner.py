@@ -10,6 +10,7 @@ import brit.tests.testtask
 import brit.tests.testdefinition
 import brit.tests.testretain_strategy
 import brit.tests.testfilemapping
+import brit.tests.testdefinitiondialog
 
 
 # initialize the test suite
@@ -22,6 +23,7 @@ suite.addTests(loader.loadTestsFromModule(brit.tests.testtask))
 suite.addTests(loader.loadTestsFromModule(brit.tests.testdefinition))
 suite.addTests(loader.loadTestsFromModule(brit.tests.testretain_strategy))
 suite.addTests(loader.loadTestsFromModule(brit.tests.testfilemapping))
+suite.addTests(loader.loadTestsFromModule(brit.tests.testdefinitiondialog))
 
 # initialize a runner, pass it your suite and run it
 runner = unittest.TextTestRunner(verbosity=3)
