@@ -15,9 +15,9 @@ import unittest
 class TestDefinitionDialog(unittest.TestCase):
     
     def setUp(self):
-        self.app       = QtGui.QApplication([])
+        self.app        = QtGui.QApplication([])
         self.definition = Definition('name', 'dir', 'from', 'to')
-        self.dlg       = DefinitionDialog(None, self.definition)
+        self.dlg        = DefinitionDialog(None, self.definition)
         
         self.dlg.show()
         

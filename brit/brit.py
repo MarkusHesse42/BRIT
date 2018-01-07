@@ -11,6 +11,8 @@ from definition import Definition
 from dialogs.taskdialog import TaskDialog
 from dialogs.definitiondialog import DefinitionDialog
 
+import brit_logging
+
 
 qtCreatorFile = os.path.join(os.path.dirname(__file__), 'ui', 'britMainForm.ui')
  

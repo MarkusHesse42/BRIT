@@ -6,6 +6,8 @@ Created on 28.12.2017
 
 import os
 import zipfile
+import logging
+from logging_decorator import log
 from datetime import datetime
 
 from filemapping import FileMapping
@@ -71,7 +73,8 @@ class Task(object):
                 return aStrategy
             
             
-    def run(self):
+    @log('Task (%s)', 'name')
+    def run(self):        
         self._prepareTargetFolder()
         filename = self._getTargetFilename()
         
@@ -80,7 +83,7 @@ class Task(object):
         
         for defintion in self.defintions():
             for fileInfo in defintion.fileInfos():
-                self._doArchiveFile(archiveFile, fileInfo)
+                self._doArchiveFile(archiveFile, fileInfo['source'], fileInfo['target'])
                 mapping.addItem(fileInfo['source'], fileInfo['target'])
         
         self._archiveMapping(archiveFile, mapping)        
@@ -117,23 +120,20 @@ class Task(object):
         """I create the zip file"""
         return zipfile.ZipFile(filename, mode='w', allowZip64 = True)
     
-    
-    def _doArchiveFile(self, archiveFile, fileInfo):
-        """Archive the given file to the given folder in the archive
+    @log('Task (%s): File: %s', attrib='name', param=2)
+    def _doArchiveFile(self, archiveFile, source, target):
+        """Archive the given source file to the given target position in the archive
         
         If the file does not exists, it is skipped"""
         
-        if not os.path.exists(fileInfo['source']):
-            # FIXME: Some logging?!
+        if not os.path.exists(source):
+            logging.warn('No such file %s' % source)
             return         
         
-        archiveFile.write(fileInfo['source'],
-                          fileInfo['target'],
+        archiveFile.write(source, target,
                           compress_type = zipfile.ZIP_DEFLATED)
         
-        # FIXME: Log in mapping file
         
-    
     def _archiveMapping(self, archiveFile, mapping):
         archiveFile.writestr(os.path.join('.meta', 'mapping.json'),
                             mapping.toString(),

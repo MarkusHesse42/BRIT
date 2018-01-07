@@ -29,11 +29,7 @@ class TaskDialog(Ui_Dialog, QtBaseClass):
                                QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowTitleHint)        
         self.setupUi(self)
         
-        #if task:
         self.task = task
-        #else:
-        #    self.task = self.newTask()
-            
         self._taskChanged()
         
         self.buttonBox.rejected.connect(self.reject)
