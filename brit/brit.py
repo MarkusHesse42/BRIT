@@ -12,6 +12,7 @@ from dialogs.taskdialog import TaskDialog
 from dialogs.definitiondialog import DefinitionDialog
 
 import brit_logging
+from logging_decorator import log
 
 
 qtCreatorFile = os.path.join(os.path.dirname(__file__), 'ui', 'britMainForm.ui')
@@ -205,8 +206,8 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
                 self.tvRetainStrategies.addTopLevelItem(RetainTreeItem(self, strategy))
             
     
-        
-    def runActiveTasks(self):
+    @log('Run all active tasks', param=-1)    
+    def runActiveTasks(self, checked):
         self.statusbar.showMessage('Starting')
         for task in self.configuration.tasks: 
             if task.isActive:
