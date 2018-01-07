@@ -4,6 +4,7 @@ Created on 07.01.2018
 @author: hesse
 '''
 
+from functools import wraps
 import logging
 from datetime import datetime
 
@@ -15,7 +16,8 @@ def log(message, attrib=None, param=-1):
     Both values are added to the message via % operator (i.e. add %s statements to message as needed). 
     '''
     def wrap(f):
-        def wrapped_f(*args):
+        @wraps(f)
+        def wrapped_f(*args, **kwargs):
             if attrib is not None:
                 value = getattr(args[0], attrib)
                 
@@ -33,8 +35,13 @@ def log(message, attrib=None, param=-1):
                 
             logging.info('Starting: %s', actual_message)
             starttime = datetime.now()
-            f(*args)
+            
+            result = f(*args, **kwargs)
+            
             duration = datetime.now() - starttime
             logging.info('Done: %s  Duration: %s', actual_message, duration)
+            
+            return result
+        
         return wrapped_f
     return wrap
