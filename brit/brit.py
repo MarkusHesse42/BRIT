@@ -77,7 +77,7 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
     def _setConfigFilenameToBrit(self, configFilename):
         filename = self._getBritConfigFilename()
         
-        data = {'configFilename': str(configFilename)}
+        data = {'configFilename': unicode(configFilename)}
         
         with open(filename, 'w') as outfile:
             json.dump(data, outfile)
@@ -134,21 +134,21 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
         else:
             StartDir = ''     
             
-        self.backupDirectory = str(QtGui.QFileDialog.getExistingDirectory(self, 
-                                                                          caption   = 'Select backup folder',
-                                                                          directory = StartDir))   
+        self.backupDirectory = unicode(QtGui.QFileDialog.getExistingDirectory(self, 
+                                                                              caption   = 'Select backup folder',
+                                                                              directory = StartDir))   
         
     
     def openConfiguration(self):
         if self.configFilename <> '':
-            StartDir = os.path.dirname(str(self.configFilename))
+            StartDir = os.path.dirname(unicode(self.configFilename))
         else:
             StartDir = ''
             
-        self.configFilename = QtGui.QFileDialog.getOpenFileName(self, 
-                                                                caption   = 'Select configuration file',
-                                                                directory = StartDir,
-                                                                filter    = "BRIT Configuration (*.brit)")
+        self.configFilename = unicode(QtGui.QFileDialog.getOpenFileName(self, 
+                                                                        caption   = 'Select configuration file',
+                                                                        directory = StartDir,
+                                                                        filter    = "BRIT Configuration (*.brit)"))
                                                                   
     
     def saveConfiguration(self):
@@ -161,7 +161,7 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
     
     def saveConfigurationAs(self):
         if self.configFilename <> '':
-            StartDir = os.path.dirname(str(self.configFilename))
+            StartDir = os.path.dirname(unicode(self.configFilename))
         else:
             StartDir = ''
                     
@@ -181,7 +181,7 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
             self.configFilename = self.editConfigFilename.text()
         
     def _backupFolderChanged(self):
-        self.configuration.backupDirectory = self.editBackupFolder.text()
+        self.configuration.backupDirectory = unicode(self.editBackupFolder.text())
         
     def _configurationChanged(self):
         self._fillJobsListview()
