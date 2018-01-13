@@ -103,6 +103,11 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
         if os.path.isfile(filename):
             # FIXME: Error handling!
             self.configuration   = Configuration.readFrom(filename)
+            
+            # If the config file was empty, I should at least create an empty configuration.
+            if not self.configuration:
+                self.configuration = Configuration()
+            
             self._configFilename = filename
             self.editConfigFilename.setText(filename)
             self._setConfigFilenameToBrit(filename)
@@ -172,7 +177,8 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
         
     
     def _configFilenameChanged(self):
-        self.configFilename = self.editConfigFilename.text()
+        if self.configFilename <> self.editConfigFilename.text():
+            self.configFilename = self.editConfigFilename.text()
         
     def _backupFolderChanged(self):
         self.configuration.backupDirectory = self.editBackupFolder.text()
