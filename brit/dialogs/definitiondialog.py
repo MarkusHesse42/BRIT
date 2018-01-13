@@ -47,7 +47,7 @@ class DefinitionDialog(Ui_Dialog, QtBaseClass):
         self.editTarget.setText(self.definition.toPlace)
         
     def _backupTypeChanged(self):
-        self.definition.backupType = self.cbbType.itemData(self.cbbType.currentIndex())
+        self.definition.backupType = unicode(self.cbbType.itemData(self.cbbType.currentIndex()).toString())
     
     def _nameChanged(self):
         self.definition.name = unicode(self.editName.text())
