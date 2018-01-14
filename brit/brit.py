@@ -14,8 +14,18 @@ from dialogs.definitiondialog import DefinitionDialog
 import brit_logging
 from logging_decorator import log
 
+# Define function to import external files when using PyInstaller.
+def resource_base_path():
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
 
-qtCreatorFile = os.path.join(os.path.dirname(__file__), 'ui', 'britMainForm.ui')
+    return base_path
+
+qtCreatorFile = os.path.join(resource_base_path(), 'ui', 'britMainForm.ui') 
  
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
