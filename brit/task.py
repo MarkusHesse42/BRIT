@@ -130,8 +130,12 @@ class Task(object):
             logging.warn('No such file %s' % source)
             return         
         
-        archiveFile.write(source, target,
-                          compress_type = zipfile.ZIP_DEFLATED)
+        try:
+            archiveFile.write(source, target,
+                              compress_type = zipfile.ZIP_DEFLATED)
+        except IOError as (errno, strerror):
+            logging.warn('File could not be read: {0} Reason: I/O error({1}): {2}'.format(source, errno, strerror))
+            
         
         
     def _archiveMapping(self, archiveFile, mapping):
