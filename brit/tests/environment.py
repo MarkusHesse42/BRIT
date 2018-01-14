@@ -41,8 +41,12 @@ class Environment(object):
         if not os.path.exists(cls.examplesFolder()):
             os.makedirs(cls.examplesFolder())
             
-        with open(os.path.join(cls.examplesFolder(),'example.txt'), 'w') as f:
+        filename = os.path.join(cls.examplesFolder(),'example.txt')
+            
+        with open(filename, 'w') as f:
             f.write('Simple test file for BRIT')
+            
+        return filename
     
      
     

@@ -2,15 +2,27 @@
 Created on 29.12.2017
 
 @author: hesse
+
+
+Note: I use testfixture here. T0 install, do
+python -m pip install testfixtures
 '''
+
 import unittest
+from testfixtures import LogCapture
+import logging
 import os
+import zipfile
 
 from brit.task import Task
 from brit.configuration import Configuration
 from brit.definition import Definition
 from brit.retain_strategy import RetainStrategy
 from brit.tests.environment import Environment
+from fileinput import filename
+
+if os.name == 'nt':  
+    import msvcrt
 
 
 class TestTask(unittest.TestCase):
@@ -145,6 +157,87 @@ class TestTask(unittest.TestCase):
         
         newConfig.backupDirectory = 'c:/temp/Backup3'
         self.assert_(newTask._getTargetFolder() == 'c:/temp/Backup3', 'folder from task not taken')
+        
+        
+    def test_doArchiveFile(self):
+        filename = Environment.setupExamplesDir()
+        
+        zipTargetFile = 'dir/example'
+        config = Configuration()
+        config.backupDirectory = Environment.targetFolder()
+        definition = Definition('name1', 'file', filename, zipTargetFile)
+        config.definitions.append(definition)
+        
+        task = Task('myName', ['name1'])
+        config.addTask(task)
+        
+        task._prepareTargetFolder()
+        targetfile  = task._getTargetFilename()
+        archiveFile = task._prepareArchive(targetfile)
+        
+        # Now the actual test
+        task._doArchiveFile(archiveFile, filename, zipTargetFile)
+        archiveFile.close()
+        
+        self.assert_(self.fileIsZipped(zipTargetFile, targetfile), 'File not placed in zip file')
+        
+        Environment.cleanupTestFolder()
+
+
+    def test_doArchiveFileFail(self):
+        filename = Environment.setupExamplesDir()
+        zipTargetFile = 'dir/example'
+        config = Configuration()
+        config.backupDirectory = Environment.targetFolder()
+        definition = Definition('name1', 'file', filename, zipTargetFile)
+        config.definitions.append(definition)
+        
+        task = Task('myName', ['name1'])
+        config.addTask(task)
+        
+        task._prepareTargetFolder()
+        targetfile  = task._getTargetFilename()
+        archiveFile = task._prepareArchive(targetfile)
+        
+        # Now the actual test
+        # I open and lock the example file to provoke an I/O error
+        file_ = open(filename, 'a')
+        if os.name == 'nt':
+            msvcrt.locking(file_.fileno(), msvcrt.LK_LOCK, 0x7fffffff)
+        
+        with LogCapture(level=logging.WARNING) as l:    
+            task._doArchiveFile(archiveFile, filename, zipTargetFile)
+            l.check(('root', 
+                     'WARNING', 
+                     'File could not be read: C:\\ProgramData\\brit_test\\examples\\example.txt Reason: I/O error(13): Permission denied'))
+                  
+        archiveFile.close()
+        
+        # Unlock and close the file
+        if os.name == 'nt':
+            msvcrt.locking(file_.fileno(), msvcrt.LK_UNLCK, 0x7fffffff)
+        file_.close()
+        
+        self.assert_(not self.fileIsZipped(zipTargetFile, targetfile), 'File placed in zip file even though it was locked')
+        
+        Environment.cleanupTestFolder()
+
+        
+    def fileIsZipped(self, file, archivename):
+        '''I check, whether the file "file" is in the zip file'''
+        if not zipfile.is_zipfile(archivename):
+            return false
+            
+        archiveFile = zipfile.ZipFile(archivename, mode='r', allowZip64 = True)
+        
+        result = False
+        for fileInfo in archiveFile.infolist():
+            if fileInfo.filename == file:
+                result = True
+                break
+        
+        archiveFile.close()
+        return result
         
         
     def testRun(self):
