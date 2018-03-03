@@ -48,6 +48,39 @@ class Environment(object):
             
         return filename
     
+    
+    @classmethod
+    def extendExamplesDir(cls):
+        someFiles = []
+          
+        folder = cls.examplesFolder()
+          
+        subFolder = os.path.join(cls.examplesFolder(), 'subfolder')
+        if not os.path.exists(subFolder):
+            os.makedirs(subFolder)
+              
+        someFiles.append(cls.makeFile(os.path.join(subFolder, 'test1.txt')))
+        someFiles.append(cls.makeFile(os.path.join(subFolder, 'test2.txt')))
+        someFiles.append(cls.makeFile(os.path.join(subFolder, 'test1.pdf')))
+                       
+        subFolder = os.path.join(cls.examplesFolder(), 'newfolder')
+        if not os.path.exists(subFolder):
+            os.makedirs(subFolder)        
+              
+        someFiles.append(cls.makeFile(os.path.join(subFolder, 'newtest1.txt')))
+        someFiles.append(cls.makeFile(os.path.join(subFolder, 'newtest1.xml')))
+        someFiles.append(cls.makeFile(os.path.join(subFolder, 'newtest1.pdf')))        
+                       
+        return someFiles
+     
+    
+    @classmethod
+    def makeFile(cls, filename):
+        with open(filename, 'w') as f:
+            f.write(filename + ': Simple test file for BRIT')
+            
+        return filename
+                 
      
     
     

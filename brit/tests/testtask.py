@@ -5,7 +5,7 @@ Created on 29.12.2017
 
 
 Note: I use testfixture here. T0 install, do
-python -m pip install testfixtures
+python -m pip install --trusted-host pypi.python.org testfixtures
 '''
 
 import unittest
@@ -258,6 +258,15 @@ class TestTask(unittest.TestCase):
         Environment.cleanupTestFolder()            
         
       
+    def test_prepareTargetFolder(self):
+        Environment.cleanupTestFolder()
+        targetFolder = os.path.join(Environment.targetFolder(), 'sub')
+        newTask      = Task('myName', ['Name1'], targetFolder=targetFolder)
+        newTask._prepareTargetFolder()
+        
+        self.assert_(os.path.exists(targetFolder), 'Targtefolder not created')
+        
+        Environment.cleanupTestFolder()
         
 
 if __name__ == "__main__":
