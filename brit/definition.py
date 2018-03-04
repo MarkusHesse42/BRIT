@@ -65,14 +65,14 @@ class Definition(object):
             infos = [{'source': self.fromPlace, 'target': self.toPlace}]
         elif self.backupType == 'dir':
             infos = []
-            for folder, subfolders, files in os.walk(self.fromPlace):
-                if self._dirIsIncluded(os.path.basename(folder)) and (not self._dirIsExcluded(os.path.basename(folder))):
-                    for aFile in files:
-                        if not self._fileIsIncluded(folder) or self._fileIsExcluded(folder):
-                            Continue
-                    
-                        infos.append({'source': os.path.join(folder, aFile), 
-                                      'target': os.path.join(self.toPlace, os.path.relpath(os.path.join(folder, aFile), os.path.dirname(self.fromPlace)))})
+            for folder, subfolders, files in os.walk(self.fromPlace,  topdown=True):
+                # Remove not wanted folders and files
+                subfolders[:] = [dir  for dir  in subfolders if self._dirIsIncluded(dir)   and (not self._dirIsExcluded(dir))  ]
+                files[:]      = [file for file in files      if self._fileIsIncluded(file) and (not self._fileIsExcluded(file))]
+                
+                for aFile in files:                    
+                    infos.append({'source': os.path.join(folder, aFile), 
+                                  'target': os.path.join(self.toPlace, os.path.relpath(os.path.join(folder, aFile), os.path.dirname(self.fromPlace)))})
             
         return infos 
         

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>589</width>
-    <height>209</height>
+    <width>668</width>
+    <height>326</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,6 +19,9 @@
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <layout class="QGridLayout" name="gridLayout">
+        <property name="bottomMargin">
+         <number>20</number>
+        </property>
         <item row="2" column="1">
          <widget class="QLineEdit" name="editSource"/>
         </item>
@@ -32,28 +35,28 @@
          <widget class="QLineEdit" name="editTarget"/>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="lblType">
           <property name="text">
            <string>Type</string>
           </property>
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="lblTarget">
           <property name="text">
            <string>Target</string>
           </property>
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="lblSource">
           <property name="text">
            <string>Source</string>
           </property>
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="lblName">
           <property name="text">
            <string>Name</string>
           </property>
@@ -67,6 +70,65 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBoxFilter">
+        <property name="title">
+         <string>Filter</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="topMargin">
+          <number>9</number>
+         </property>
+         <property name="bottomMargin">
+          <number>9</number>
+         </property>
+         <item>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="4" column="2">
+            <widget class="QLineEdit" name="editExcludeDirs"/>
+           </item>
+           <item row="5" column="2">
+            <widget class="QLineEdit" name="editIncludeFiles"/>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="lblIncludedDirs_2">
+             <property name="text">
+              <string>Included Files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="lblExcludedDirs">
+             <property name="text">
+              <string>Excluded Directories</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="lblIncludedDirs">
+             <property name="text">
+              <string>Included Directories</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="lblExcludedDirs_2">
+             <property name="text">
+              <string>Excluded Files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLineEdit" name="editIncludeDirs"/>
+           </item>
+           <item row="6" column="2">
+            <widget class="QLineEdit" name="editExcludeFiles"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>

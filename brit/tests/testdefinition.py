@@ -134,7 +134,8 @@ class TestDefinition(unittest.TestCase):
         
         myDef.includeDirPattern = ['subfolder']
         infos = myDef.fileInfos()
-        self.assert_(len(infos) == 3, 'Nb of files not OK for include dirs')
+        # Note that I get all files of the base dir, independent if that matches included dirrs!
+        self.assert_(len(infos) == 4, 'Nb of files not OK for include dirs')
         
         Environment.cleanupTestFolder()
         

@@ -36,6 +36,11 @@ class DefinitionDialog(Ui_Dialog, QtBaseClass):
         self.pbSelectSoruce.setIcon(self.style().standardIcon(QtGui.QStyle.SP_DialogOpenButton))
         self.editTarget.editingFinished.connect(self._toPlaceChanged)
         
+        self.editIncludeDirs.editingFinished.connect(self._includeDirsChanged)
+        self.editExcludeDirs.editingFinished.connect(self._excludeDirsChanged)
+        self.editIncludeFiles.editingFinished.connect(self._includeFilesChanged)
+        self.editExcludeFiles.editingFinished.connect(self._excludeFilesChanged)
+        
         self.definition = definition
         self._definitionChanged()
         
@@ -45,6 +50,12 @@ class DefinitionDialog(Ui_Dialog, QtBaseClass):
         self.cbbType.setCurrentIndex(self.cbbType.findData(self.definition.backupType))
         self.editSource.setText(self.definition.fromPlace)
         self.editTarget.setText(self.definition.toPlace)
+        
+        self.editIncludeDirs.setText(",".join(self.definition.includeDirPattern))
+        self.editExcludeDirs.setText(",".join(self.definition.excludeDirPattern))
+        self.editIncludeFiles.setText(",".join(self.definition.includeFilePattern))
+        self.editExcludeFiles.setText(",".join(self.definition.excludeFilePattern))
+        
         
     def _backupTypeChanged(self):
         self.definition.backupType = unicode(self.cbbType.itemData(self.cbbType.currentIndex()).toString())
@@ -61,6 +72,34 @@ class DefinitionDialog(Ui_Dialog, QtBaseClass):
     
     def _toPlaceChanged(self):
         self.definition.toPlace = unicode(self.editTarget.text())
+        
+    def _includeDirsChanged(self):
+        if self.editIncludeDirs.text():
+            self.definition.includeDirPattern = unicode(self.editIncludeDirs.text()).split(",")
+        else:
+            self.definition.includeDirPattern = []
+            
+    
+    def _excludeDirsChanged(self):
+        if self.editExcludeDirs.text():
+            self.definition.excludeDirPattern = unicode(self.editExcludeDirs.text()).split(",")
+        else:
+            self.definition.excludeDirPattern = []
+            
+    
+    def _includeFilesChanged(self):
+        if self.editIncludeFiles.text():
+            self.definition.includeFilePattern = unicode(self.editIncludeFiles.text()).split(",")
+        else:
+            self.definition.includeFilePattern = []
+            
+    
+    def _excludeFilesChanged(self):
+        if self.editExcludeFiles.text():
+            self.definition.excludeFilePattern = unicode(self.editExcludeFiles.text()).split(",")
+        else:
+            self.definition.excludeFilePattern = [] 
+            
     
     def _selectSourceFolder(self):
         if self.definition.fromPlace <> '':
