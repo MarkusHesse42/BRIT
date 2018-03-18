@@ -60,22 +60,20 @@ class Definition(object):
         return values
         
         
+    # Like fileInfos but implemented as a generator
     def fileInfos(self):
         if self.backupType == 'file':
-            infos = [{'source': self.fromPlace, 'target': self.toPlace}]
+            yield {'source': self.fromPlace, 'target': self.toPlace}
         elif self.backupType == 'dir':
-            infos = []
             for folder, subfolders, files in os.walk(self.fromPlace,  topdown=True):
                 # Remove not wanted folders and files
                 subfolders[:] = [dir  for dir  in subfolders if self._dirIsIncluded(dir)   and (not self._dirIsExcluded(dir))  ]
                 files[:]      = [file for file in files      if self._fileIsIncluded(file) and (not self._fileIsExcluded(file))]
                 
                 for aFile in files:                    
-                    infos.append({'source': os.path.join(folder, aFile), 
-                                  'target': os.path.join(self.toPlace, os.path.relpath(os.path.join(folder, aFile), os.path.dirname(self.fromPlace)))})
+                    yield {'source': os.path.join(folder, aFile), 
+                           'target': os.path.join(self.toPlace, os.path.relpath(os.path.join(folder, aFile), os.path.dirname(self.fromPlace)))}
             
-        return infos 
-        
         
     def _dirIsIncluded(self, dirname):
         if self.includeDirPattern:

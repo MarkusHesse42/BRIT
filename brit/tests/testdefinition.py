@@ -111,29 +111,38 @@ class TestDefinition(unittest.TestCase):
         self.assert_(infos[0]['target'] == 'Test/example.txt', 'Target not OK')
         
         Environment.cleanupTestFolder()
+
         
-        
-    def testFileInfos(self):
+    def testfileInfos(self):
         Environment.cleanupTestFolder()
         exampleFile = Environment.setupExamplesDir()
-                
-        myDef = Definition('Name1', 'dir', Environment.examplesFolder(), 'Test/Dir')
-        infos = myDef.fileInfos()
         
+        myDef = Definition('Name1', 'dir', Environment.examplesFolder(), 'Test/Dir')
+        
+        infos = []
+        for info in myDef.fileInfosGen():
+            infos.append(info)    
+            
         self.assert_(infos <> None, 'No fileInfos created')
         self.assert_(infos[0]['source'] == os.path.join(Environment.examplesFolder(), 'example.txt'),
                      'Example source file not OK')
         self.assert_(infos[0]['target'] == os.path.join('Test/Dir', 'examples', 'example.txt'),
-                     'Example source file not OK')
+                     'Example source file not OK')        
         
         someFiles = Environment.extendExamplesDir()
         someFiles.append(exampleFile)
         
-        infos = myDef.fileInfos()
+        infos = []
+        for info in myDef.fileInfosGen():
+            infos.append(info)  
+
         self.assert_(len(infos) == len(someFiles), 'Not all files found')
         
         myDef.includeDirPattern = ['subfolder']
-        infos = myDef.fileInfos()
+        
+        infos = []
+        for info in myDef.fileInfosGen():
+            infos.append(info)  
         # Note that I get all files of the base dir, independent if that matches included dirrs!
         self.assert_(len(infos) == 4, 'Nb of files not OK for include dirs')
         
