@@ -60,7 +60,6 @@ class Definition(object):
         return values
         
         
-    # Like fileInfos but implemented as a generator
     def fileInfos(self):
         if self.backupType == 'file':
             yield {'source': self.fromPlace, 'target': self.toPlace}
@@ -73,6 +72,13 @@ class Definition(object):
                 for aFile in files:                    
                     yield {'source': os.path.join(folder, aFile), 
                            'target': os.path.join(self.toPlace, os.path.relpath(os.path.join(folder, aFile), os.path.dirname(self.fromPlace)))}
+                    
+    def filesSize(self):
+        size = 0
+        for info in self.fileInfos():
+            size = size + os.path.getsize(info['source'])
+            
+        return size
             
         
     def _dirIsIncluded(self, dirname):

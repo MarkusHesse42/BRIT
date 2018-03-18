@@ -104,7 +104,10 @@ class TestDefinition(unittest.TestCase):
         exampleFile = Environment.setupExamplesDir()
         
         myDef = Definition('Name1', 'file', exampleFile, 'Test/example.txt')
-        infos = myDef.fileInfos()
+        
+        infos = []
+        for info in myDef.fileInfos():
+            infos.append(info)   
         
         self.assert_(len(infos) == 1, 'There should be exactly one fileInfo')
         self.assert_(infos[0]['source'] == exampleFile, 'Source not OK')
@@ -120,7 +123,7 @@ class TestDefinition(unittest.TestCase):
         myDef = Definition('Name1', 'dir', Environment.examplesFolder(), 'Test/Dir')
         
         infos = []
-        for info in myDef.fileInfosGen():
+        for info in myDef.fileInfos():
             infos.append(info)    
             
         self.assert_(infos <> None, 'No fileInfos created')
@@ -133,7 +136,7 @@ class TestDefinition(unittest.TestCase):
         someFiles.append(exampleFile)
         
         infos = []
-        for info in myDef.fileInfosGen():
+        for info in myDef.fileInfos():
             infos.append(info)  
 
         self.assert_(len(infos) == len(someFiles), 'Not all files found')
@@ -141,14 +144,25 @@ class TestDefinition(unittest.TestCase):
         myDef.includeDirPattern = ['subfolder']
         
         infos = []
-        for info in myDef.fileInfosGen():
+        for info in myDef.fileInfos():
             infos.append(info)  
         # Note that I get all files of the base dir, independent if that matches included dirrs!
         self.assert_(len(infos) == 4, 'Nb of files not OK for include dirs')
         
         Environment.cleanupTestFolder()
         
+    def testfilesSize(self):
+        Environment.cleanupTestFolder()
+        exampleFile = Environment.setupExamplesDir()
+        someFiles = Environment.extendExamplesDir()
+        someFiles.append(exampleFile)
         
+        myDef = Definition('Name1', 'dir', Environment.examplesFolder(), 'Test/Dir')
+        self.assert_(myDef.filesSize() == 514, 'FilesSize not OK')
+                
+        Environment.cleanupTestFolder()
+        
+            
     def test_dirIsIncluded(self):
         myDef = Definition('myName', 'dir', 'C:/temp', './C/temp', [], [], [], [])
         self.assert_(myDef._dirIsIncluded('anydir'), 'Dir not included on empty include list')
