@@ -9,19 +9,23 @@ import zipfile
 import logging
 from logging_decorator import log
 from datetime import datetime
+from PyQt4.QtCore import pyqtSignal, QObject
 
 from filemapping import FileMapping
 
-class Task(object):
+class Task(QObject):
     '''
     classdocs
     '''
+    progressChanged = pyqtSignal(int, str)
 
 
     def __init__(self, name, definitionNames, strategyName = '', targetFolder = '', isActive = False):
         '''
         Constructor
         '''
+        QObject.__init__(self)
+        
         self.name            = name
         self.definitionNames = definitionNames
         self.strategyName    = strategyName
@@ -72,6 +76,13 @@ class Task(object):
             if aStrategy.name == self.strategyName:
                 return aStrategy
             
+    def filesSize(self):
+        size = 0
+        for defintion in self.defintions():
+            size = size + defintion.filesSize()
+
+        return size
+            
             
     @log('Task (%s)', 'name')
     def run(self):        
@@ -83,8 +94,10 @@ class Task(object):
         
         for defintion in self.defintions():
             for fileInfo in defintion.fileInfos():
+                self.progressChanged.emit(0, "Archiving file: " + fileInfo['source'])
                 self._doArchiveFile(archiveFile, fileInfo['source'], fileInfo['target'])
                 mapping.addItem(fileInfo['source'], fileInfo['target'])
+                self.progressChanged.emit(os.path.getsize(fileInfo['source']), "Archiving file: " + fileInfo['source'])
         
         self._archiveMapping(archiveFile, mapping)        
                 
