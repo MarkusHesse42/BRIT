@@ -4,6 +4,8 @@ import json
 
 from functools import partial
 from PyQt4 import QtCore, QtGui, uic
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QApplication
 
 from configuration import Configuration
 from task import Task
@@ -67,7 +69,14 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
         self.tvDefinitions.customContextMenuRequested.connect(self._showDefinitionsContextMenu)
         self.tvDefinitions.itemDoubleClicked.connect(self.editDefinitionItem)
         
-        self.statusbar = self.statusBar()
+        self.statusbar   = self.statusBar()
+        self.progressBar = QtGui.QProgressBar()
+        
+        self.statusbar.addPermanentWidget(self.progressBar)
+
+        # This is simply to show the bar
+        self.progressBar.setGeometry(30, 40, 200, 25)
+        self.progressBar.setValue(0)
                 
         
     def _getBritConfigFilename(self):
@@ -224,13 +233,8 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
     
     @log('Run all active tasks', param=-1)    
     def runActiveTasks(self, checked):
-        self.statusbar.showMessage('Starting')
-        for task in self.configuration.tasks: 
-            if task.isActive:
-                self.runTask(task)
-        self.statusbar.showMessage('Done', 2000)
-            
-            
+        self.runTasks([task for task in self.configuration.tasks if task.isActive])
+                    
         
     def _showJobsContextMenu(self, point):
         item = self.tvJobs.currentItem()
@@ -292,8 +296,37 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
         self._configurationChanged()
     
     def runTask(self, task):
-        task.run()
+        self.runTasks([task])
+        
+    def runTasks(self, tasks):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        
+        self.statusbar.showMessage('Starting')
+        self.progressBar.setValue(0)
+        
+        filesSize = 0
+        for task in tasks:
+            filesSize = filesSize + task.filesSize()
+            
+        self.progressBar.setMaximum(filesSize)
+            
+        for task in tasks:
+            task.progressChanged.connect(self.on_progress)
+            task.run()
+            
+        self.progressBar.setValue(0);
+        QApplication.restoreOverrideCursor()
+        self.statusbar.showMessage('Done', 2000)
+                
     
+    def on_progress(self, progressAddValue, progressString):
+        # If a negative value is given, I leave the progress as it is.
+        # Nice feature, if I only want to change the label text.
+        if not (progressAddValue < 0):
+            self.progressBar.setValue(self.progressBar.value() + progressAddValue) 
+
+        self.statusbar.showMessage(progressString)
+        
     
     def addTask(self, task):
         self.configuration.tasks.append(task)
