@@ -13,19 +13,15 @@ class RetainStrategy(object):
     '''
     
     # List of possible retain intervals    
-    RETAIN_INTERVALS= set(['year', 'month', 'week', 'day'])
+    RETAIN_INTERVALS = set(['year', 'month', 'week', 'day'])
+    DEFAULT_INTERVAL = "year"
+    DEFAULT_DURATION = timedelta(microseconds=0)
 
 
     def __init__(self, name="", retainDuration=timedelta(microseconds=0), retainInterval="year"):
         '''
         Constructor
         '''
-        if retainDuration == None:
-            retainDuration = timedelta(microseconds=0)
-            
-        if retainInterval == None:
-            retainInterval = "year"
-        
         assert retainInterval in self.RETAIN_INTERVALS
         
         self.name           = name
@@ -41,12 +37,12 @@ class RetainStrategy(object):
         if 'retainDuration' in jsonobj:
             duration = timedelta(seconds=jsonobj['retainDuration'])
         else:    
-            duration = None
+            duration = cls.DEFAULT_DURATION
             
         if 'retainInterval' in jsonobj:
             interval = jsonobj['retainInterval']
         else:
-            interval = None
+            interval = cls.DEFAULT_INTERVAL
             
         return cls(jsonobj['name'], duration, interval)
            
