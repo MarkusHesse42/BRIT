@@ -78,7 +78,7 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
         # This is simply to show the bar
         self.progressBar.setGeometry(30, 40, 200, 25)
         self.progressBar.setValue(0)
-                
+                        
         
     def _getBritConfigFilename(self):
         """Basic configuration file"""
@@ -206,7 +206,7 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
     def _configurationChanged(self):
         self._fillJobsListview()
         self._fillDefinitionsList()
-        self._fillStrategieList()
+
         
     def _fillJobsListview(self):
         self.tvJobs.clear()
@@ -223,14 +223,6 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
             for definition in self.configuration.definitions:
                 self.tvDefinitions.addTopLevelItem(DefinitionsTreeItem(self, definition))
                 
-                
-    def _fillStrategieList(self):
-        self.tvRetainStrategies.clear()
-        
-        if self.configuration:
-            for strategy in self.configuration.retainStrategies:
-                self.tvRetainStrategies.addTopLevelItem(RetainTreeItem(self, strategy))
-            
     
     @log('Run all active tasks', param=-1)    
     def runActiveTasks(self, checked):
@@ -437,17 +429,6 @@ class DefinitionsTreeItem(QtGui.QTreeWidgetItem):
                 
         return menu
         
-#############################################################################################################
-#
-# Retain strategy tree elements
-#
-
-class RetainTreeItem(QtGui.QTreeWidgetItem):
-    def __init__(self, owner, strategy):
-        QtGui.QTreeWidgetItem.__init__(self)
-        self.strategy = strategy
-        self.setText(0, strategy.name)
-
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
