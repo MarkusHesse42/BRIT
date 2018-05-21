@@ -12,6 +12,7 @@ from datetime import datetime
 from PyQt4.QtCore import pyqtSignal, QObject
 
 from filemapping import FileMapping
+from glob import iglob
 
 class Task(QObject):
     '''
@@ -104,6 +105,13 @@ class Task(QObject):
         archiveFile.close()
         
         return filename
+    
+    def storedFiles(self):
+        '''I return an iterator of all files in the target directory that were created by me'''
+        targetPath = self._getTargetFolder()
+        for fileName in iglob(os.path.join(targetPath, self.name + '_*')):
+            yield fileName 
+        
             
             
     def _getTargetFolder(self):

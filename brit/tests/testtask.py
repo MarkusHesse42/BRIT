@@ -255,7 +255,39 @@ class TestTask(unittest.TestCase):
         self.assert_(os.path.exists(Environment.targetFolder()), 'Target folder not created')
         self.assert_(filename <> None and filename <> '', 'No file name returned on run') 
         
-        Environment.cleanupTestFolder()            
+        Environment.cleanupTestFolder()   
+        
+    def testStoredFiles(self):
+        Environment.cleanupTestFolder()
+        
+        targetFolder = Environment.targetFolder()
+        
+        # Create some files in target folder
+        if not os.path.exists(targetFolder):
+            os.makedirs(targetFolder)
+            
+        filename  = os.path.join(targetFolder,'myName_20180304_1200.zip')
+        filename2 = os.path.join(targetFolder,'otherName_20180304_1200.zip')
+            
+        with open(filename, 'w') as f:
+            f.write('Simple test file for BRIT')
+            
+        with open(filename2, 'w') as f:
+            f.write('Simple test file for BRIT')    
+            
+        newConfig = Configuration()
+        newConfig.definitions.append(Definition('Name1', 'dir', Environment.examplesFolder(), './C/temp1'))
+
+        newTask = Task('myName', ['Name1'], targetFolder=Environment.targetFolder())
+        newConfig.addTask(newTask)        
+        
+        fileNames = []
+        
+        for fName in newTask.storedFiles():
+            fileNames.append(fName)  
+            
+        self.assert_(len(fileNames) == 1, "Only one file should be found")
+        self.assert_(fileNames[0] == filename, "Wrong file found")
         
       
     def test_prepareTargetFolder(self):
