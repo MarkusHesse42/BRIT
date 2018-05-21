@@ -36,6 +36,7 @@ class TaskDialog(Ui_Dialog, QtBaseClass):
         self.buttonBox.accepted.connect(self.accept)
         
         self.editName.editingFinished.connect(self._taskNameChanged)
+        self.cbbRetainStrategy.currentIndexChanged.connect(self._retainStrategyChanged)
         
         self.pbAdd.clicked.connect(self.addSelectedDefintion)
         self.pbRemove.clicked.connect(self.removeSelectedDefintion)
@@ -44,10 +45,14 @@ class TaskDialog(Ui_Dialog, QtBaseClass):
     def _taskChanged(self):
         self._fillPossibleDefinitions()
         self._fillSelectedDefinitions()
+        self._fillRetainStrategies()
         self.editName.setText(self.task.name)
         
     def _taskNameChanged(self):
         self.task.name = unicode(self.editName.text())
+        
+    def _retainStrategyChanged(self):
+        self.task.strategyName = unicode(self.cbbRetainStrategy.itemData(self.cbbRetainStrategy.currentIndex()).toString())
         
     def configuration(self):
         return self.parent().configuration
@@ -58,6 +63,18 @@ class TaskDialog(Ui_Dialog, QtBaseClass):
         for definition in self.configuration().definitions:
             if not definition.name in self.task.definitionNames:
                 self.tvPossibleDefinitions.addTopLevelItem(DefinitionsTreeItem(self.tvPossibleDefinitions, definition))
+                
+    def _fillRetainStrategies(self):
+        self.cbbRetainStrategy.clear()
+        self.cbbRetainStrategy.addItem('--', '--')
+        
+        for strategy in self.configuration().retainStrategies:
+            self.cbbRetainStrategy.addItem(strategy.name, strategy.name)
+            
+        if self.task.strategyName:
+            self.cbbRetainStrategy.setCurrentIndex(self.cbbRetainStrategy.findData(self.task.strategyName))
+        else:
+            self.cbbRetainStrategy.setCurrentIndex(self.cbbRetainStrategy.findData('--'))
                 
     def _fillSelectedDefinitions(self):
         self.tvSelectedDefinitions.clear()

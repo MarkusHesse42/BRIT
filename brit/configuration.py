@@ -7,6 +7,7 @@ Created on 28.12.2017
 import json
 import os
 
+from datetime import timedelta
 from json.decoder import JSONDecoder
 from json.encoder import JSONEncoder
 
@@ -85,6 +86,13 @@ class Configuration(object):
     def addTask(self, task):
         self.tasks.append(task)
         task.configuration = self
+        
+    
+    def addDefaultRetainStrategies(self):
+        self.retainStrategies.append(RetainStrategy('Daily',   timedelta(days=1),    "day"  ))
+        self.retainStrategies.append(RetainStrategy('Weekly',  timedelta(weeks = 1), "week" ))
+        self.retainStrategies.append(RetainStrategy('Monthly', timedelta(days=31),   "month"))
+        self.retainStrategies.append(RetainStrategy('Yearly',  timedelta(days=365),  "year" ))
         
         
 CONFIG_CLASSES = {'Configuration':  Configuration,

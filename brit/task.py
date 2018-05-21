@@ -104,7 +104,11 @@ class Task(QObject):
                 
         archiveFile.close()
         
+        if self.strategy():
+            self.strategy().apply(self)
+        
         return filename
+    
     
     def storedFiles(self):
         '''I return an iterator of all files in the target directory that were created by me'''

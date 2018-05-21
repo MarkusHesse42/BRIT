@@ -42,6 +42,7 @@ class BritApp(QtGui.QMainWindow, Ui_MainWindow):
         
         if not self.configuration:
             self.configuration = Configuration()
+            self.configuration.addDefaultRetainStrategies()
        
         self.editBackupFolder.editingFinished.connect(self._backupFolderChanged)
         self.pbSelectBackupFolder.pressed.connect(self.selectBackupFolder)
